@@ -54,7 +54,18 @@ def ingest(ticker: str):
             )
             conn.commit()
 
-        df_to_save.to_sql(table_name, con=eng, if_exists="replace", index=False)
+        df_to_save.columns = [c.replace(' ', '_') for c in df_to_save.columns]
+
+# --- STEP 2: Update your existing to_sql line ---
+# We use 'replace' to automatically create the missing columns in Railway
+        df_to_save.to_sql(
+        table_name, 
+        con=eng, 
+        if_exists="replace", 
+        index=False, 
+        method="multi", 
+        chunksize=500
+        )
         print(f"  [OK] {table_name} - {len(df_to_save)} rows written for {ticker}")
 
     print(f"[OK] Raw Data Ingestion complete for {ticker}")
