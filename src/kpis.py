@@ -3,9 +3,19 @@ import pandas as pd
 import yfinance as yf
 from sqlalchemy import create_engine
 
-# ── DB Connection ─────────────────────────────────────────────────────────────
-user, password, host, port, db_name = 'root', 'Bank1234', 'localhost', '3306', 'bank_data'
-engine = create_engine(f"mysql+mysqlconnector://{user}:{password}@{host}:{port}/{db_name}")
+# ── DB Connection ────────────────────────────────────────────────────────────
+# This block pulls directly from your Streamlit Secrets
+host     = os.getenv("DB_HOST", "switchyard.proxy.rlwy.net")
+user     = os.getenv("DB_USER", "root")
+password = os.getenv("DB_PASS", "renzjSvgntOxWmFngxRwzOeJCFvNMVBf")
+port     = os.getenv("DB_PORT", "27808")
+db_name  = os.getenv("DB_NAME", "railway")
+
+# Added 'pool_pre_ping' to stop that InterfaceError you saw!
+engine = create_engine(
+    f"mysql+mysqlconnector://{user}:{password}@{host}:{port}/{db_name}",
+    pool_pre_ping=True
+)
 
 def compute_fundamentals(ticker: str, category: str) -> dict:
     # ── Pull tables from MySQL ────────────────────────────────────────────────
