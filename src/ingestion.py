@@ -10,12 +10,17 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 # ── 1. Database Connection ─────────────────────────────────────────────────────
 def _get_engine():
-    host     = os.getenv("DB_HOST", "localhost")
+    # This pulls from Streamlit Secrets first, falls back to Railway defaults
+    host     = os.getenv("DB_HOST", "switchyard.proxy.rlwy.net")
     user     = os.getenv("DB_USER", "root")
-    password = os.getenv("DB_PASS", "Bank1234")
-    port     = os.getenv("DB_PORT", "3306")
-    db_name  = os.getenv("DB_NAME", "bank_data")
-    return create_engine(f"mysql+mysqlconnector://{user}:{password}@{host}:{port}/{db_name}")
+    password = os.getenv("DB_PASS", "renzjSvgntOxWmFngxRwzOeJCFvNMVBf")
+    port     = os.getenv("DB_PORT", "27808")
+    db_name  = os.getenv("DB_NAME", "railway")
+    
+    return create_engine(
+        f"mysql+mysqlconnector://{user}:{password}@{host}:{port}/{db_name}",
+        pool_pre_ping=True
+    )
 
 # ── 2. Main Ingestion Function ─────────────────────────────────────────────────
 def ingest(ticker: str):
