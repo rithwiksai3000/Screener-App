@@ -50,30 +50,30 @@ def compute_fundamentals(ticker: str, category: str) -> dict:
 
     # ── KPI #1 — Efficiency (ROE/ROA) ────────────────────────────────────────
     if category == "Bank":
-        val = (latest['Net Income'] / latest['Total Assets']) * 100
+        val = (latest['Net_Income'] / latest['Total_Assets']) * 100
         score = 1.0 if val > 1.5 else 0.5 if val > 1.0 else 0
         label, thresh = "ROA", "> 1.0%"
     else:
-        val = (latest['Net Income'] / latest['Stockholders Equity']) * 100
+        val = (latest['Net_Income'] / latest['Stockholders_Equity']) * 100
         score = 1.0 if val > 25 else 0.5 if val > 15 else 0
         label, thresh = "ROE", "> 15%"
     results['Efficiency'] = {"label": label, "value": round(val, 2), "formatted": f"{val:.1f}%", "score": score, "threshold": thresh}
 
     # ── KPI #2 — Margin ──────────────────────────────────────────────────────
     if category == "Bank":
-        val = (latest['Net Interest Income'] / latest['Total Assets']) * 100
+        val = (latest['Net_Interest_Income'] / latest['Total_Assets']) * 100
         score = 1.0 if val > 4 else 0.5 if val > 3 else 0
         label, thresh = "NIM", "> 3%"
     else:
-        val = (latest['Operating Income'] / latest['Total Revenue']) * 100
+        val = (latest['Operating_Income'] / latest['Total_Revenue']) * 100
         score = 1.0 if val > 20 else 0.5 if val > 10 else 0
-        label, thresh = "Op Margin", "> 10%"
+        label, thresh = "Op_Margin", "> 10%"
     results['Margin'] = {"label": label, "value": round(val, 2), "formatted": f"{val:.1f}%", "score": score, "threshold": thresh}
 
     # ── KPI #3 — Revenue Growth ──────────────────────────────────────────────
     if len(df_funda) > 1:
-        prev_rev = df_funda.iloc[-2]['Total Revenue']
-        val = ((latest['Total Revenue'] - prev_rev) / prev_rev) * 100 if prev_rev != 0 else 0
+        prev_rev = df_funda.iloc[-2]['Total_Revenue']
+        val = ((latest['Total_Revenue'] - prev_rev) / prev_rev) * 100 if prev_rev != 0 else 0
     else:
         val = 0
     score = 1.0 if val > 15 else 0.5 if val > 7 else 0
@@ -81,11 +81,11 @@ def compute_fundamentals(ticker: str, category: str) -> dict:
 
     # ── KPI #4 — Solvency (Risk) ─────────────────────────────────────────────
     if category == "Bank":
-        val = (latest['Stockholders Equity'] / latest['Total Assets']) * 100
+        val = (latest['Stockholders_Equity'] / latest['Total_Assets']) * 100
         score = 1.0 if val > 12 else 0.5 if val > 8 else 0
         label, thresh = "Equity/Assets", "> 8%"
     else:
-        val = latest['Total Debt'] / latest['Stockholders Equity']
+        val = latest['Total_Debt'] / latest['Stockholders_Equity']
         score = 1.0 if val < 0.5 else 0.5 if val < 1.5 else 0
         label, thresh = "Debt-to-Equity", "< 1.5x"
     results['Solvency'] = {"label": label, "value": round(val, 2), "formatted": f"{val:.2f}x", "score": score, "threshold": thresh}
@@ -94,11 +94,11 @@ def compute_fundamentals(ticker: str, category: str) -> dict:
     ticker_obj = yf.Ticker(ticker)
     curr_price = ticker_obj.fast_info['last_price']
     if category == "Bank":
-        val = curr_price / (latest['Tangible Book Value'] if 'Tangible Book Value' in latest else latest['Stockholders Equity'])
+        val = curr_price / (latest['Tangible_Book_Value'] if 'Tangible_Book_Value' in latest else latest['Stockholders_Equity'])
         score = 1.0 if val < 1.0 else 0.5 if val < 1.5 else 0
         label, thresh = "P/B Ratio", "< 1.5x"
     else:
-        val = curr_price / (latest['Net Income'] / 1.0)
+        val = curr_price / (latest['Net_Income'] / 1.0)
         score = 1.0 if 0 < val < 15 else 0.5 if val < 25 else 0
         label, thresh = "P/E Ratio", "0 - 20"
     results['Valuation'] = {"label": label, "value": round(val, 2), "formatted": f"{val:.1f}x", "score": score, "threshold": thresh}
@@ -120,25 +120,25 @@ def compute_fundamentals(ticker: str, category: str) -> dict:
 
     # ── KPI #7 — ROCE (Return on Capital Employed) ──────────────────────────
     if category == "Bank":
-        capital_employed = latest['Total Assets']  # Banks don't report Current Liabilities
-        val = (latest['Net Income'] / capital_employed) * 100 if capital_employed > 0 else 0
+        capital_employed = latest['Total_Assets']  # Banks don't report Current Liabilities
+        val = (latest['Net_Income'] / capital_employed) * 100 if capital_employed > 0 else 0
         score = 1.0 if val > 1.5 else 0.5 if val > 0.8 else 0
         label, thresh = "ROCE", "> 1%"
     else:
-        capital_employed = latest['Total Assets'] - latest['Current Liabilities']
-        val = (latest['Operating Income'] / capital_employed) * 100 if capital_employed > 0 else 0
+        capital_employed = latest['Total_Assets'] - latest['Current_Liabilities']
+        val = (latest['Operating_Income'] / capital_employed) * 100 if capital_employed > 0 else 0
         score = 1.0 if val > 20 else 0.5 if val > 12 else 0
         label, thresh = "ROCE", "> 12%"
     results['ROCE'] = {"label": label, "value": round(val, 2), "formatted": f"{val:.1f}%", "score": score, "threshold": thresh}
 
     # ── KPI #8 — ROIC (Return on Invested Capital) ──────────────────────────
-    total_debt = latest['Total Debt'] if pd.notna(latest.get('Total Debt')) else 0
-    invested_capital = latest['Stockholders Equity'] + total_debt
-    net_income = latest['Net Income']
+    total_debt = latest['Total_Debt'] if pd.notna(latest.get('Total_Debt')) else 0
+    invested_capital = latest['Stockholders_Equity'] + total_debt
+    net_income = latest['Net_Income']
     tax = latest.get('Tax Provision', 0) or 0
     pre_tax = net_income + tax
     tax_rate = max(0.0, min((tax / pre_tax) if pre_tax > 0 else 0.21, 0.50))
-    nopat = latest['Operating Income'] * (1 - tax_rate)
+    nopat = latest['Operating_Income'] * (1 - tax_rate)
     if category == "Bank":
         val = (net_income / invested_capital) * 100 if invested_capital > 0 else 0
         score = 1.0 if val > 12 else 0.5 if val > 8 else 0
