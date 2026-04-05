@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import sys, os
 from sqlalchemy import create_engine, text
 from src.Migration import run
 import pandas as pd
-
 
 # Ensure Python can find Migration.py if it's in the same folder
 sys.path.insert(0, os.path.dirname(__file__))   
@@ -16,7 +16,6 @@ def _get_engine():
     port     = os.getenv("DB_PORT", "3306")
     db_name  = os.getenv("DB_NAME", "bank_data")
     return create_engine(f"mysql+mysqlconnector://{user}:{password}@{host}:{port}/{db_name}")
-
 
 # ── 2. Main Ingestion Function ─────────────────────────────────────────────────
 def ingest(ticker: str):
@@ -38,26 +37,25 @@ def ingest(ticker: str):
     }
 
     # ── 2c. Upsert loop ──
-        for table_name, df in dataframes.items():
-            # 1. Prepare the data
-            df_to_save = df.reset_index().rename(columns={"index": "Date"})
-            df_to_save["Company"] = ticker
-            df_to_save["Category"] = category
-    
-            # 2. Clean column names (Spaces to Underscores)
-            df_to_save.columns = [c.replace(' ', '_') for c in df_to_save.columns]
-    
-            # 3. Save to Railway (This REPLACES the table, so no DELETE is needed)
-            eng = _get_engine()
-            df_to_save.to_sql(
-                name=table_name, 
-                con=eng, 
-                if_exists="replace", 
-                index=False, 
-                method="multi", 
-                chunksize=500
-            )
+    for table_name, df in dataframes.items():
+        # 1. Prepare the data
+        df_to_save = df.reset_index().rename(columns={"index": "Date"})
+        df_to_save["Company"] = ticker
+        df_to_save["Category"] = category
 
+        # 2. Clean column names (Spaces to Underscores)
+        df_to_save.columns = [c.replace(' ', '_') for c in df_to_save.columns]
+
+        # 3. Save to Railway (This REPLACES the table, so no DELETE is needed)
+        eng = _get_engine()
+        df_to_save.to_sql(
+            name=table_name, 
+            con=eng, 
+            if_exists="replace", 
+            index=False, 
+            method="multi", 
+            chunksize=500
+        )
 
 # ── 2d. New Result Saving Function ───────────────────────────────────────────
 def upsert_kpi_report(ticker, category, results):
@@ -99,7 +97,6 @@ def upsert_kpi_report(ticker, category, results):
     # ── Write to SQL (ONLY ONCE) ──
     df_report.to_sql("kpi_report_card", con=eng, if_exists="append", index=False)
     print(f"  [OK] Detailed KPIs and Score ({grand_total}/10) saved to 'kpi_report_card'.")
-
 
 # ── 3. Entry point ─────────────────────────────────────────────────────────────
 # This block is now empty to prevent double-prompts when running test_run.py
