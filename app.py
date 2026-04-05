@@ -1356,7 +1356,7 @@ if st.session_state.get('analysis_done'):
                     except Exception:
                         return ''
 
-                styled = sens_df.style.format("${:.2f}").applymap(color_cell)
+                styled = sens_df.style.format("${:.2f}").map(color_cell)
                 st.dataframe(styled, use_container_width=True)
 
                 st.markdown(
