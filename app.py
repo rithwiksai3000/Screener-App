@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 
 
 # --- SMART ENGINE CREATOR ---
-def get_db_engine():
+def get_engine():
     # 1. Try to get credentials from Streamlit Secrets (Cloud)
     try:
         user = st.secrets["DB_USER"]
@@ -25,7 +25,7 @@ def get_db_engine():
     return create_engine(f"mysql+mysqlconnector://{user}:{password}@{host}:{port}/{db_name}")
 
 # Create the engine for the app to use
-engine = get_db_engine()
+engine = get_engine()
 
 from src.ingestion import ingest, upsert_kpi_report
 from src.kpis import compute_fundamentals, compute_technicals
