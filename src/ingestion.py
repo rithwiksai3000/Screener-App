@@ -38,28 +38,25 @@ def ingest(ticker: str):
     }
 
     # ── 2c. Upsert loop ──
-   for table_name, df in dataframes.items():
-        # 1. Prepare the data
-        df_to_save = df.reset_index().rename(columns={"index": "Date"})
-        df_to_save["Company"]  = ticker
-        df_to_save["Category"] = category
-
-        # 2. Clean column names (Spaces to Underscores)
-        df_to_save.columns = [c.replace(' ', '_') for c in df_to_save.columns]
-
-        # 3. Save to Railway (This REPLACES the table, so no DELETE is needed)
-        eng = _get_engine()
-        df_to_save.to_sql(
-            name=table_name, 
-            con=eng, 
-            if_exists="replace", 
-            index=False, 
-            method="multi", 
-            chunksize=500
-        )
-        print(f"  [OK] {table_name} written for {ticker}")
-
-    print(f"[OK] Ingestion complete for {ticker}")
+        for table_name, df in dataframes.items():
+            # 1. Prepare the data
+            df_to_save = df.reset_index().rename(columns={"index": "Date"})
+            df_to_save["Company"] = ticker
+            df_to_save["Category"] = category
+    
+            # 2. Clean column names (Spaces to Underscores)
+            df_to_save.columns = [c.replace(' ', '_') for c in df_to_save.columns]
+    
+            # 3. Save to Railway (This REPLACES the table, so no DELETE is needed)
+            eng = _get_engine()
+            df_to_save.to_sql(
+                name=table_name, 
+                con=eng, 
+                if_exists="replace", 
+                index=False, 
+                method="multi", 
+                chunksize=500
+            )
 
 
 # ── 2d. New Result Saving Function ───────────────────────────────────────────
