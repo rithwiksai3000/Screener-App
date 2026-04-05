@@ -54,7 +54,7 @@ def ingest(ticker: str):
             )
             conn.commit()
 
-        df_to_save.to_sql(table_name, con=eng, if_exists="append", index=False)
+        df_to_save.to_sql(table_name, con=eng, if_exists="replace", index=False)
         print(f"  [OK] {table_name} - {len(df_to_save)} rows written for {ticker}")
 
     print(f"[OK] Raw Data Ingestion complete for {ticker}")
