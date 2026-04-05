@@ -196,9 +196,10 @@ analyze_btn = st.sidebar.button("Run Analysis", type="primary", use_container_wi
 if analyze_btn:
     with st.spinner(f"Analyzing {ticker_input}..."):
         # 1. Run Backend Logic
-        temp_data = run(ticker_input)
-        category = temp_data["category"]
-        ingest(ticker_input)
+        if ticker_input:
+            temp_data = run(ticker_input.strip().upper())
+            category = temp_data.get("category", "Unknown")
+            ingest(ticker_input.strip().upper())
         
         funda_results = compute_fundamentals(ticker_input, category)
         tech_results = compute_technicals(temp_data["df_stock"])
