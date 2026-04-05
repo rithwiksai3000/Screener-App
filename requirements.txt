@@ -4,6 +4,7 @@ sqlalchemy
 mysql-connector-python
 yfinance
 requests-cache
+curl_cffi
 plotly
 scikit-learn
 xgboost
