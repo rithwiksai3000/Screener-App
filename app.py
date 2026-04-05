@@ -190,7 +190,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.sidebar.markdown("<div style='color:var(--txt2);font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem'>Search Stock</div>", unsafe_allow_html=True)
-ticker_input = st.sidebar.text_input("", "NVDA", label_visibility="collapsed", placeholder="Ticker e.g. AAPL").upper().strip()
+ticker_input = st.sidebar.text_input("", "", label_visibility="collapsed", placeholder="Ticker e.g. AAPL").upper().strip()
 analyze_btn = st.sidebar.button("Run Analysis", type="primary", use_container_width=True)
 
 if analyze_btn:
