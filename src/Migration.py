@@ -2,6 +2,7 @@
 import yfinance as yf
 import requests
 from curl_cffi.requests import Session
+import time
 import pandas as pd
 import numpy as np
 import os
@@ -9,7 +10,9 @@ import os
 session = Session(impersonate="chrome")
 session.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
 def run(ticker):
+    session = Session(impersonate="chrome")
     ticker = ticker.upper().strip()
+    time.sleep(2)
     ticker_obj = yf.Ticker(ticker, session = session)
 
     # --- 1. Define Standard Columns ---
