@@ -38,38 +38,28 @@ def ingest(ticker: str):
     }
 
     # ── 2c. Upsert loop ──
-    for table_name, df in dataframes.items():
+   for table_name, df in dataframes.items():
+        # 1. Prepare the data
         df_to_save = df.reset_index().rename(columns={"index": "Date"})
         df_to_save["Company"]  = ticker
         df_to_save["Category"] = category
 
-        header_cols = ["Date", "Company", "Category"]
-        data_cols   = [c for c in df_to_save.columns if c not in header_cols]
-        df_to_save  = df_to_save[header_cols + data_cols]
-
-        eng = _get_engine()
-        with eng.connect() as conn:
-            conn.execute(
-                text(f"DELETE FROM {table_name} WHERE Company = :ticker"),
-                {"ticker": ticker}
-            )
-            conn.commit()
-
+        # 2. Clean column names (Spaces to Underscores)
         df_to_save.columns = [c.replace(' ', '_') for c in df_to_save.columns]
 
-# --- STEP 2: Update your existing to_sql line ---
-# We use 'replace' to automatically create the missing columns in Railway
+        # 3. Save to Railway (This REPLACES the table, so no DELETE is needed)
+        eng = _get_engine()
         df_to_save.to_sql(
-        table_name, 
-        con=eng, 
-        if_exists="replace", 
-        index=False, 
-        method="multi", 
-        chunksize=500
+            name=table_name, 
+            con=eng, 
+            if_exists="replace", 
+            index=False, 
+            method="multi", 
+            chunksize=500
         )
-        print(f"  [OK] {table_name} - {len(df_to_save)} rows written for {ticker}")
+        print(f"  [OK] {table_name} written for {ticker}")
 
-    print(f"[OK] Raw Data Ingestion complete for {ticker}")
+    print(f"[OK] Ingestion complete for {ticker}")
 
 
 # ── 2d. New Result Saving Function ───────────────────────────────────────────
