@@ -5,7 +5,8 @@ import pandas as pd
 import numpy as np
 import os
 
-session = requests_cache.CachedSession('yfinance.cache', expire_after=3600)
+session = requests.Session()
+session.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
 def run(ticker):
     ticker = ticker.upper().strip()
     ticker_obj = yf.Ticker(ticker, session = session)
