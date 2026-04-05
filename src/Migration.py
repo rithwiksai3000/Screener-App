@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import yfinance as yf
-import requests_cache
+import requests
 import pandas as pd
 import numpy as np
 import os
