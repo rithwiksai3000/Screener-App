@@ -1,0 +1,17 @@
+streamlit
+pandas
+numpy
+plotly
+yfinance
+sqlalchemy
+scikit-learn
+xgboost
+hmmlearn
+apscheduler
+python-dotenv
+langchain-chroma
+langchain-core
+langchain-google-genai
+mysql-connector-python
+chromadb
+prophet
