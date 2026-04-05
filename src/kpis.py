@@ -1,4 +1,5 @@
 # src/kpis.py
+import os
 import pandas as pd
 import yfinance as yf
 from sqlalchemy import create_engine
