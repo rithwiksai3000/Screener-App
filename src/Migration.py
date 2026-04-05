@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import yfinance as yf
 import requests
+from curl_cffi.requests import Session
 import pandas as pd
 import numpy as np
 import os
 
-session = requests.Session()
+session = Session(impersonate="chrome")
 session.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
 def run(ticker):
     ticker = ticker.upper().strip()
