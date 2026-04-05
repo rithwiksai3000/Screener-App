@@ -4,10 +4,10 @@ import pandas as pd
 import numpy as np
 import os
 
-
+session = requests_cache.CachedSession('yfinance.cache', expire_after=3600)
 def run(ticker):
     ticker = ticker.upper().strip()
-    ticker_obj = yf.Ticker(ticker)
+    ticker_obj = yf.Ticker(ticker, session = session)
 
     # --- 1. Define Standard Columns ---
     master_bs_cols = [
