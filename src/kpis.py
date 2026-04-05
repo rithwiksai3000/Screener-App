@@ -19,22 +19,26 @@ engine = create_engine(
 )
 
 def compute_fundamentals(ticker: str, category: str) -> dict:
+    
     # ── Pull tables from MySQL ────────────────────────────────────────────────
     try:
         query = f"SELECT * FROM income_statement_annual WHERE Company = '{ticker}'"
         df_income = pd.read_sql(query, con=engine)
+        # SEASON THE SOUP HERE (After it's pulled)
+        df_income.columns = [c.replace(' ', '_') for c in df_income.columns]
     except Exception as e:
         print(f"Database connection failed: {e}")
         df_income = pd.DataFrame()
 
-# --- STEP 2: Secure the Balance Sheet Pull ---
+    # --- STEP 2: Secure the Balance Sheet Pull ---
     try:
         query_bal = f"SELECT * FROM balance_sheet_annual WHERE Company = '{ticker}'"
         df_balance = pd.read_sql(query_bal, con=engine)
+        # SEASON THE SOUP HERE TOO
+        df_balance.columns = [c.replace(' ', '_') for c in df_balance.columns]
     except Exception as e:
         print(f"Error fetching balance data: {e}")
         df_balance = pd.DataFrame()
-    
 
     # ── Merge + sort oldest → newest ─────────────────────────────────────────
     df_funda = pd.merge(df_income, df_balance, on=['Date', 'Company', 'Category'], how='inner')
