@@ -126,8 +126,8 @@ with left:
 
     st.dataframe(
         top15.style
-            .applymap(color_score, subset=["total_score"])
-            .applymap(color_trend, subset=["long_term_trend"]),
+            .map(color_score, subset=["total_score"])
+            .map(color_trend, subset=["long_term_trend"]),
         use_container_width=True,
         height=520,
     )
@@ -193,7 +193,7 @@ if not df_prev.empty:
         return "color:#9ca3af"
 
     st.dataframe(
-        top_improved.style.applymap(color_change, subset=["Change"]),
+        top_improved.style.map(color_change, subset=["Change"]),
         use_container_width=True, hide_index=True,
     )
 else:
