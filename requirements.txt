@@ -9,7 +9,6 @@ plotly
 scikit-learn
 xgboost
 prophet
-tensorflow
 langchain
 langchain-google-genai
 langchain-chroma
